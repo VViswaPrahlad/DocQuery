@@ -1,18 +1,36 @@
-﻿# DocQuery — Multi-document RAG with evaluated retrieval, evidence inspection, and page-level citations.
+# DocQuery
 
-DocQuery turns uploaded PDFs into searchable evidence and answers questions with document/page citations. Its Streamlit interface supports scoped chat, evidence search, document summaries, cross-document comparisons, and inspection of the text supplied to the model.
+**Multi-document RAG with evaluated retrieval, evidence inspection, and page-level citations.**
+
+[Live Demo](https://docquery-rag.streamlit.app) · [GitHub Repository](https://github.com/VViswaPrahlad/DocQuery)
+
+DocQuery accepts multiple PDFs, preserves page-aware evidence, retrieves relevant passages, and answers with document/page citations. Its Streamlit interface supports conversational follow-ups, document-scoped questions, summaries, cross-document comparisons, and inspection of retrieved evidence. An offline retrieval benchmark compares dense, lexical, and hybrid retrieval.
 
 **Dense/FAISS performed best on the frozen 36-question evaluation.** BM25 and Hybrid RRF remain available as evaluated comparison strategies. This project demonstrates retrieval trade-offs and practical RAG engineering; it does not claim hybrid superiority.
 
-## Try the demo
+## Demo
 
-Start the app after setup:
+![DocQuery landing page](docs/images/landing.png)
+
+Public demo with a zero-setup fictional document set or PDF upload workflow.
+
+![DocQuery suggested questions](docs/images/demo-questions.png)
+
+Suggested questions make the demo immediately testable.
+
+![DocQuery cross-document comparison](docs/images/cross-document.png)
+
+Cross-document Q&A retrieves evidence from multiple PDFs and returns page-level source references.
+
+Open the [live demo](https://docquery-rag.streamlit.app) and choose **Try Demo** to load two fictional reports, then click a **Try asking** suggestion. Alternatively, upload PDFs and select **Build / Update Index**. In **Cross-Document**, use **Compare your documents** and **Compare documents** to submit a comparison.
+
+For a local demo, start the app after setup:
 
 ```powershell
 .\venv\Scripts\python.exe -m streamlit run app.py
 ```
 
-Choose **Try Demo** to load two fictional reports, or upload your own PDFs and select **Build / Update Index**. Evidence search needs cached embeddings but no LLM key; answers and summaries require provider access.
+Evidence search needs embeddings but no LLM key; answers and summaries require provider access.
 
 A short walkthrough:
 
@@ -22,7 +40,32 @@ A short walkthrough:
 4. Ask about cryptocurrency revenue, which is absent. Review refusal behavior rather than accepting an invented answer.
 5. Generate a summary, interact with another widget, and confirm it persists. Export the conversation, summary, or evaluation log; remove documents to reset the library.
 
-The demo fixture is separate from the frozen six-document evaluation corpus. It contains no private material. Actual browser screenshots/recording have not yet been captured; automated UI tests verify behavior, not visual layout.
+The demo fixture is separate from the frozen six-document evaluation corpus and contains no private material.
+
+## Key Features
+
+- **PDF ingestion:** multiple PDFs, native text extraction with OCR fallback, and page-aware chunking.
+- **Evaluated retrieval:** BGE embeddings, dense FAISS search, BM25 lexical search, and Hybrid Reciprocal Rank Fusion (RRF).
+- **Question answering:** document-scoped retrieval, conversational follow-ups, and cross-document Q&A.
+- **Evidence inspection:** retrieved passages, page-level citations, and citation-reference validation.
+- **Document summaries:** bounded summarization across all document chunks.
+- **Demo and evaluation:** public Streamlit demo and a reproducible offline retrieval benchmark.
+
+Citation-reference validation checks that cited document/page references belong to retrieved evidence; it does **not** verify factual correctness or entailment.
+
+## Measured retrieval results
+
+The [authoritative evaluation](docs/evaluation.md) uses 36 frozen questions across six fictional documents: 29 answerable, seven unanswerable, six follow-ups, and four cross-document questions.
+
+| Method | Hit@3 | Recall@3 | MRR@3 |
+| --- | ---: | ---: | ---: |
+| Dense / FAISS | 1.000 | 0.966 | 0.931 |
+| BM25 | 0.793 | 0.733 | 0.638 |
+| Hybrid RRF | 0.931 | 0.897 | 0.810 |
+
+Dense/FAISS performed best on this **small controlled benchmark**. RRF can promote lexical distractors over relevant dense results. Document scoping improved retrieval on ambiguous questions, while follow-up and document-coverage heuristics remained imperfect. The report includes per-case rankings, latency boundaries, and observed regressions; algorithms were not tuned against the fixture.
+
+Unanswerable questions returned nonempty evidence. Mocked refusal checks verify instructions and response plumbing, not actual model refusal accuracy. These results do not establish general retrieval superiority across other datasets or workloads, or factual answer correctness.
 
 ## Architecture
 
@@ -60,20 +103,6 @@ Stack: Python 3.13, Streamlit, PyMuPDF, LangChain text splitters, sentence-trans
 
 For trusted local persistence, `ingest.build_index_from_pdfs(paths, persist=True)` writes FAISS vectors, JSON chunk metadata, and a model/integrity manifest. Load checks model identity, dimensions, counts, and checksums. Legacy pickle metadata requires explicit opt-in and cannot verify model identity. These checks do not make malicious FAISS binaries safe; only use trusted local indexes.
 
-## Measured retrieval results
-
-The [authoritative evaluation](docs/evaluation.md) uses 36 frozen questions across six fictional documents: 29 answerable, seven unanswerable, six follow-ups, and four cross-document questions.
-
-| Method | Hit@3 | Recall@3 | MRR@3 |
-|---|---:|---:|---:|
-| Dense / FAISS | 1.000 | 0.966 | 0.931 |
-| BM25 | 0.793 | 0.733 | 0.638 |
-| Hybrid RRF | 0.931 | 0.897 | 0.810 |
-
-Dense performed best on this **small controlled benchmark**. RRF can promote lexical distractors over relevant dense results. Document scoping improved retrieval on ambiguous questions, while follow-up and document-coverage heuristics remained imperfect. The report includes per-case rankings, latency boundaries, and observed regressions; algorithms were not tuned against the fixture.
-
-Unanswerable questions returned nonempty evidence. Mocked refusal checks verify instructions and response plumbing, not actual model refusal accuracy. These results do not establish general performance or factual answer correctness.
-
 ## Evidence and citation behavior
 
 The model is instructed to cite `[Source: filename.pdf, page 2]`. Each answer retains its retrieved text, page references, chunk IDs, extraction type, and score labels. Unicode citation delimiters are normalized; missing and unknown references are flagged.
@@ -90,7 +119,7 @@ python -m venv venv
 Copy-Item .env.example .env
 ```
 
-On Linux/macOS, use `venv/bin/python` and `cp .env.example .env`. For app-only use, install `requirements.txt`; development requirements add pytest. Direct dependencies and model-runtime constraints reflect the tested existing environment, not a complete transitive lockfile. A fresh installation and hosted CI still need verification.
+On Linux/macOS, use `venv/bin/python` and `cp .env.example .env`. For app-only use, install `requirements.txt`; development requirements add pytest. Direct dependencies and model-runtime constraints reflect the tested existing environment, not a complete transitive lockfile. Clean-install reproducibility and hosted CI remain unverified separately from the working public Streamlit demo.
 
 Set `GROQ_API_KEY` in `.env` for generation. Never publish it. The default model is `openai/gpt-oss-120b`; access and quotas depend on your account.
 
@@ -133,7 +162,7 @@ OCR attempts English recognition at 2x rendering zoom when native text has fewer
 
 The runner creates temporary PDFs and an in-memory index, then writes the current evaluation document. To recheck without replacing the recorded artifact, use `--output .runtime/evaluation-recheck.md`. Query-embedding time is separated from warm search latency.
 
-Tests cover metadata, fusion, scoped/follow-up retrieval, replacement/deletion, empty stores, OCR failure, persistence checks, citation references, provider errors, sequential conversations, judge isolation, cleanup, and Streamlit reruns. CI runs the default suite without credentials or model downloads; GitHub-hosted execution is not yet verified. Native-PDF retrieval, cached BGE loading, and automated UI behavior have been verified locally; actual provider generation was verified before cleanup, not called during cleanup validation.
+Tests cover metadata, fusion, scoped/follow-up retrieval, replacement/deletion, empty stores, OCR failure, persistence checks, citation references, provider errors, sequential conversations, judge isolation, cleanup, and Streamlit reruns. CI runs the default suite without credentials or model downloads; GitHub-hosted execution is not yet verified. Native-PDF retrieval, cached BGE loading, and automated UI behavior have been verified locally. The public Streamlit demo supports provider-backed Q&A, follow-ups, summaries, and cross-document comparisons; offline tests use mocked generation and do not establish live answer accuracy.
 
 ## Limitations
 
@@ -143,7 +172,7 @@ Tests cover metadata, fusion, scoped/follow-up retrieval, replacement/deletion, 
 - Plain-text extraction does not reconstruct every complex table, diagram, or reading order.
 - Session memory is temporary. Large libraries and multi-stage summaries can consume RAM and provider quota.
 - Tesseract is absent in the verified development environment; OCR execution quality is unmeasured.
-- Browser screenshots, clean-install verification, hosted CI, deployment, and load testing remain outstanding.
+- The public Streamlit demo and screenshots are available. Clean-install verification, hosted CI, and load testing remain outstanding; the demo is not a production-scale deployment.
 
 ## Project map
 
