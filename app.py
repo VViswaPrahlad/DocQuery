@@ -290,8 +290,10 @@ with tab_summary:
 with tab_cross:
     st.subheader('Cross-Document')
     st.caption('Compare or combine retrieved evidence across your indexed documents. Inspect which pages were selected.')
-    cross_query = st.text_input('Cross-document question', key='cross_box')
-    if st.button('Compare documents', disabled=not cross_query.strip()):
+    with st.form('cross_document_form'):
+        cross_query = st.text_input('Cross-document question', key='cross_box')
+        cross_submitted = st.form_submit_button('Compare documents')
+    if cross_submitted and cross_query.strip():
         try:
             with processing('Comparing evidence across documents…'):
                 st.session_state.cross_result = cross_document_query(cross_query, st.session_state.store)

@@ -108,6 +108,48 @@ def test_cross_document_call_requires_click_and_persists(monkeypatch, fake_embed
     assert app.session_state["cross_result"]["answer"] == "Stored comparison"
 
 
+def test_demo_cross_document_atomic_submission_persists_and_finishes(monkeypatch, fake_embedder):
+    events = watch_processing(monkeypatch)
+    answer = ("Aurora: 90 days [Source: battery_brief.pdf, page 2]. "
+              "Meridian: 30 days [Source: fleet_report.pdf, page 2].")
+    result = {"answer": answer, "documents_used": ["battery_brief.pdf", "fleet_report.pdf"],
+              "sources": [], "citation_validation": {"status": "matched"}}
+
+    def generate(query, store):
+        assert events[-1] == ("start", "Comparing evidence across documents…")
+        assert store.list_documents() == ["battery_brief.pdf", "fleet_report.pdf"]
+        return result
+
+    mock = Mock(side_effect=generate)
+    monkeypatch.setattr(rag_engine, "cross_document_query", mock)
+    app = AppTest.from_file(APP, default_timeout=30).run()
+    button(app, "Try Demo").click().run()
+    cross_tab = next(tab for tab in app.tabs if tab.label == "Cross-Document")
+    # AppTest has no browser tab-selection API. Target its controls directly,
+    # submitting text and the form button together without an intermediate rerun.
+    cross_tab.text_input[0].set_value("Compare the maintenance intervals of Aurora and Meridian.")
+    cross_tab.button[0].click().run()
+    assert not app.exception
+    mock.assert_called_once()
+    assert mock.call_args.args[0] == "Compare the maintenance intervals of Aurora and Meridian."
+    assert app.session_state["cross_result"] == result
+    assert any(item.value == answer for item in app.markdown)
+    assert len(app.status) == 0 and events[-1][0] == "complete"
+    app.run()
+    mock.assert_called_once()
+    assert any(item.value == answer for item in app.markdown)
+    assert len(app.status) == 0
+
+
+def test_cross_document_blank_form_does_not_generate(monkeypatch, fake_embedder):
+    generate = Mock()
+    monkeypatch.setattr(rag_engine, "cross_document_query", generate)
+    app = app_with_store(fake_embedder)
+    button(app, "Compare documents").click().run()
+    assert not app.exception and len(app.status) == 0
+    generate.assert_not_called()
+
+
 def test_summary_persists_across_rerun(monkeypatch, fake_embedder):
     mock = Mock(return_value="Stored summary")
     monkeypatch.setattr(rag_engine, "summarize_document", mock)
