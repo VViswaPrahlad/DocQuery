@@ -9,6 +9,13 @@ import rag_engine
 
 APP = str(Path(__file__).resolve().parents[1] / "app.py")
 
+DEMO_QUESTIONS = (
+    "How much energy does the Aurora battery project store?",
+    "What are the limitations of the Aurora battery system?",
+    "What is MF4 telemetry used for?",
+    "Compare the maintenance intervals of Aurora and Meridian.",
+)
+
 
 def app_with_store(fake_embedder):
     app = AppTest.from_file(APP, default_timeout=30).run()
@@ -24,6 +31,61 @@ def app_with_store(fake_embedder):
 
 def button(app, label):
     return next(b for b in app.button if b.label == label)
+
+
+def test_demo_suggestions_hidden_without_loaded_demo(fake_embedder):
+    landing = AppTest.from_file(APP, default_timeout=30).run()
+    regular = app_with_store(fake_embedder)
+    for app in (landing, regular):
+        assert not any(b.label in DEMO_QUESTIONS for b in app.button)
+
+
+@pytest.mark.parametrize("question", DEMO_QUESTIONS)
+def test_demo_suggestion_submits_once_through_existing_chat(monkeypatch, fake_embedder, question):
+    generate = Mock(return_value={"answer": "Demo answer", "sources": []})
+    monkeypatch.setattr(rag_engine, "answer_question", generate)
+    app = AppTest.from_file(APP, default_timeout=30).run()
+    button(app, "Try Demo").click().run()
+    assert not app.exception
+    assert any(item.value == "**Try asking**" for item in app.markdown)
+    assert all(any(b.label == q for b in app.button) for q in DEMO_QUESTIONS)
+    generate.assert_not_called()
+
+    button(app, question).click().run()
+    assert not app.exception
+    generate.assert_called_once()
+    assert generate.call_args.args[0] == question
+    assert generate.call_args.kwargs["chat_history"] == []
+    assert len(app.session_state["chat_history"]) == 2
+    assert app.session_state["chat_history"][0] == {"role": "user", "content": question}
+    assert app.session_state["chat_history"][1]["role"] == "assistant"
+    assert app.session_state["chat_history"][1]["content"] == "Demo answer"
+    app.run()
+    generate.assert_called_once()
+
+
+def test_demo_suggestions_survive_clear_chat_but_hide_after_document_removal(fake_embedder):
+    app = AppTest.from_file(APP, default_timeout=30).run()
+    button(app, "Try Demo").click().run()
+    button(app, "Clear chat").click().run()
+    assert all(any(b.label == q for b in app.button) for q in DEMO_QUESTIONS)
+    app.checkbox(key="select_battery_brief.pdf").check().run()
+    button(app, "Remove selected (1)").click().run()
+    assert not app.exception
+    assert not app.session_state["demo_active"]
+    assert not any(b.label in DEMO_QUESTIONS for b in app.button)
+
+
+def test_failed_demo_suggestion_is_not_retried_on_rerun(monkeypatch, fake_embedder):
+    generate = Mock(side_effect=RuntimeError("Controlled provider failure"))
+    monkeypatch.setattr(rag_engine, "answer_question", generate)
+    app = AppTest.from_file(APP, default_timeout=30).run()
+    button(app, "Try Demo").click().run()
+    button(app, DEMO_QUESTIONS[0]).click().run()
+    assert not app.exception
+    assert any("Controlled provider failure" in error.value for error in app.error)
+    app.run()
+    generate.assert_called_once()
 
 
 def test_initial_render_needs_no_model_or_provider():

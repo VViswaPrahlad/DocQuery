@@ -22,7 +22,7 @@ st.caption('Evaluated retrieval · Page-level citations · Multi-document Q&A')
 
 for name, default in {'store': None, 'chat_history': [], 'eval_logs': [], 'doc_names': [],
                       'last_sources': [], 'last_elapsed': 0.0, 'summary_result': None,
-                      'cross_result': None, 'search_results': None}.items():
+                      'cross_result': None, 'search_results': None, 'demo_active': False}.items():
     if name not in st.session_state:
         st.session_state[name] = default
 
@@ -55,6 +55,7 @@ def processing(label, pinned=False):
 
 
 def reset_results():
+    st.session_state.demo_active = False
     st.session_state.chat_history = []
     st.session_state.eval_logs = []
     st.session_state.last_sources = []
@@ -188,6 +189,7 @@ if st.session_state.store is None:
                         st.session_state.store = build_index_from_pdfs(write_fixture_pdfs(directory), persist=False)
                         st.session_state.doc_names = st.session_state.store.list_documents()
                         reset_results()
+                        st.session_state.demo_active = True
                 st.rerun()
             except (RuntimeError, ValueError, OSError):
                 st.error('Could not load the demo. Check that the embedding model is available.')
@@ -202,6 +204,7 @@ if st.session_state.store is None:
 st.caption(f"{len(st.session_state.doc_names)} documents ready · Use document selection to keep ambiguous questions in scope.")
 tab_chat, tab_search, tab_summary, tab_cross, tab_eval = st.tabs(['Chat / Q&A', 'Evidence Search', 'Summarize', 'Cross-Document', 'Evaluation'])
 
+suggested_query = None
 with tab_chat:
     st.subheader('Ask your documents')
     if len(st.session_state.doc_names) > 1:
@@ -209,6 +212,19 @@ with tab_chat:
                        help='Select documents when a question could refer to more than one project.')
     if not st.session_state.chat_history:
         st.caption('Ask a question below. Inspect page references and retrieved evidence alongside the answer.')
+    if st.session_state.demo_active:
+        st.markdown('**Try asking**')
+        suggestions = (
+            'How much energy does the Aurora battery project store?',
+            'What are the limitations of the Aurora battery system?',
+            'What is MF4 telemetry used for?',
+            'Compare the maintenance intervals of Aurora and Meridian.',
+        )
+        suggestion_columns = st.columns(2)
+        for index, question in enumerate(suggestions):
+            with suggestion_columns[index % 2]:
+                if st.button(question, key=f'demo_question_{index}', width='stretch'):
+                    suggested_query = question
     for message in st.session_state.chat_history:
         with st.chat_message(message['role']):
             if message.get('error'):
@@ -338,6 +354,7 @@ with tab_eval:
 
 # Keep input and its temporary processing status pinned to the page bottom.
 chat_query = st.chat_input('Ask a question about your documents…', submit_mode='disable')
+chat_query = chat_query or suggested_query
 if chat_query:
     st.session_state.chat_history.append({'role': 'user', 'content': chat_query})
     scope = st.session_state.get('chat_scope', [])
