@@ -124,6 +124,8 @@ def test_demo_cross_document_atomic_submission_persists_and_finishes(monkeypatch
     monkeypatch.setattr(rag_engine, "cross_document_query", mock)
     app = AppTest.from_file(APP, default_timeout=30).run()
     button(app, "Try Demo").click().run()
+    app.session_state['active_tab'] = 'Cross-Document'
+    app.run()
     cross_tab = next(tab for tab in app.tabs if tab.label == "Cross-Document")
     # AppTest has no browser tab-selection API. Target its controls directly,
     # submitting text and the form button together without an intermediate rerun.
@@ -170,6 +172,27 @@ def test_cross_document_blank_form_does_not_generate(monkeypatch, fake_embedder)
     app = app_with_store(fake_embedder)
     button(app, "Compare documents").click().run()
     assert not app.exception and len(app.status) == 0
+    generate.assert_not_called()
+
+
+def test_cross_document_input_clarity_and_chat_visibility(monkeypatch, fake_embedder):
+    generate = Mock()
+    monkeypatch.setattr(rag_engine, 'cross_document_query', generate)
+    monkeypatch.setattr(rag_engine, 'answer_question', generate)
+    app = app_with_store(fake_embedder)
+    assert len(app.chat_input) == 1
+    app.session_state['active_tab'] = 'Cross-Document'
+    app.run()
+    assert not app.exception and len(app.chat_input) == 0
+    assert app.text_input(key='cross_box').label == 'Compare your documents'
+    assert app.text_input(key='cross_box').placeholder == 'Ask a question that compares information across documents...'
+    assert any(item.value == 'Cross-Document' for item in app.subheader)
+    assert button(app, 'Compare documents')
+    for tab in ('Chat / Q&A', 'Evidence Search', 'Summarize', 'Evaluation'):
+        app.session_state['active_tab'] = tab
+        app.run()
+        assert not app.exception and len(app.chat_input) == 1
+        assert app.chat_input[0].placeholder == 'Ask a question about your documents…'
     generate.assert_not_called()
 
 

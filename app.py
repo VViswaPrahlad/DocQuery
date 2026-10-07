@@ -212,7 +212,9 @@ if st.session_state.store is None:
     st.stop()
 
 st.caption(f"{len(st.session_state.doc_names)} documents ready · Use document selection to keep ambiguous questions in scope.")
-tab_chat, tab_search, tab_summary, tab_cross, tab_eval = st.tabs(['Chat / Q&A', 'Evidence Search', 'Summarize', 'Cross-Document', 'Evaluation'])
+tab_chat, tab_search, tab_summary, tab_cross, tab_eval = st.tabs(
+    ['Chat / Q&A', 'Evidence Search', 'Summarize', 'Cross-Document', 'Evaluation'],
+    key='active_tab', on_change='rerun')
 
 suggested_query = None
 with tab_chat:
@@ -302,7 +304,8 @@ with tab_cross:
     st.subheader('Cross-Document')
     st.caption('Compare or combine retrieved evidence across your indexed documents. Inspect which pages were selected.')
     with st.form('cross_document_form'):
-        cross_query = st.text_input('Cross-document question', key='cross_box')
+        cross_query = st.text_input('Compare your documents', key='cross_box',
+                                   placeholder='Ask a question that compares information across documents...')
         cross_submitted = st.form_submit_button('Compare documents')
     cross_diagnostic('submit', cross_run_id, submitted=cross_submitted,
                      query_present=bool(cross_query.strip()), streamlit_version=st.__version__)
@@ -393,7 +396,9 @@ with tab_eval:
             st.rerun()
 
 # Keep input and its temporary processing status pinned to the page bottom.
-chat_query = st.chat_input('Ask a question about your documents…', submit_mode='disable')
+chat_query = None
+if not tab_cross.open:
+    chat_query = st.chat_input('Ask a question about your documents…', submit_mode='disable')
 chat_query = chat_query or suggested_query
 if chat_query:
     st.session_state.chat_history.append({'role': 'user', 'content': chat_query})
