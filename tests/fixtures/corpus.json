@@ -1,0 +1,27 @@
+{
+  "description": "Synthetic DocQuery evaluation corpus. Fictional facts written for this project; not investment or engineering guidance.",
+  "documents": [
+    {
+      "name": "battery_brief.pdf",
+      "pages": [
+        "The fictional Aurora battery project stores 24 megawatt-hours of energy. Aurora uses lithium iron phosphate (LFP) cells. Its funding program is the fictional Green Storage Grant.",
+        "Aurora's limitations include temperature-sensitive performance and gradual capacity degradation. Its maintenance inspection interval is 90 days. Battery containers use smoke sensors and thermal monitoring."
+      ]
+    },
+    {
+      "name": "fleet_report.pdf",
+      "pages": [
+        "The fictional Meridian fleet uses the MF4 telemetry format for GPS logs. The pipeline uses DBSCAN clustering to separate driving contexts. Processing time fell from sixty minutes to fifteen minutes.",
+        "Meridian's average daily energy use is 120 kilowatt-hours per vehicle. Its maintenance inspection interval is 30 days. Fleet safety checks include brake inspection and tire pressure checks."
+      ]
+    }
+  ],
+  "cases": [
+    {"id": "battery_capacity", "question": "How much energy does the Aurora battery project store?", "relevant_pages": [{"doc_name": "battery_brief.pdf", "page": 1}], "answer_keywords": ["24"]},
+    {"id": "battery_limitations", "question": "What are the limitations of the Aurora battery project?", "relevant_pages": [{"doc_name": "battery_brief.pdf", "page": 2}], "answer_keywords": ["temperature", "degradation"], "scope": ["battery_brief.pdf"]},
+    {"id": "fleet_format", "question": "What telemetry format does the Meridian fleet use for GPS logs?", "relevant_pages": [{"doc_name": "fleet_report.pdf", "page": 1}], "answer_keywords": ["MF4"]},
+    {"id": "fleet_algorithm", "question": "What clustering algorithm separates driving contexts?", "relevant_pages": [{"doc_name": "fleet_report.pdf", "page": 1}], "answer_keywords": ["DBSCAN"]},
+    {"id": "maintenance_comparison", "question": "Compare the maintenance inspection intervals of Aurora and Meridian.", "relevant_pages": [{"doc_name": "battery_brief.pdf", "page": 2}, {"doc_name": "fleet_report.pdf", "page": 2}], "answer_keywords": ["90", "30"], "multi_document": true},
+    {"id": "unsupported", "question": "What is Aurora's cryptocurrency mining revenue?", "relevant_pages": [], "should_refuse": true}
+  ]
+}
