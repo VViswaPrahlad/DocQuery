@@ -108,7 +108,7 @@ def test_cross_document_call_requires_click_and_persists(monkeypatch, fake_embed
     assert app.session_state["cross_result"]["answer"] == "Stored comparison"
 
 
-def test_demo_cross_document_atomic_submission_persists_and_finishes(monkeypatch, fake_embedder):
+def test_demo_cross_document_atomic_submission_persists_and_finishes(monkeypatch, fake_embedder, caplog):
     events = watch_processing(monkeypatch)
     answer = ("Aurora: 90 days [Source: battery_brief.pdf, page 2]. "
               "Meridian: 30 days [Source: fleet_report.pdf, page 2].")
@@ -135,10 +135,33 @@ def test_demo_cross_document_atomic_submission_persists_and_finishes(monkeypatch
     assert app.session_state["cross_result"] == result
     assert any(item.value == answer for item in app.markdown)
     assert len(app.status) == 0 and events[-1][0] == "complete"
+    diagnostic_messages = [record.getMessage() for record in caplog.records
+                           if record.name == 'docquery.cross_document']
+    for event in ('generation_start', 'generation_returned', 'stored', 'processing_finished',
+                  'lookup', 'render_start', 'render_finished'):
+        assert any(f'event={event} ' in message for message in diagnostic_messages)
+    assert not any(answer in message or mock.call_args.args[0] in message for message in diagnostic_messages)
+    caplog.clear()
     app.run()
     mock.assert_called_once()
     assert any(item.value == answer for item in app.markdown)
     assert len(app.status) == 0
+    assert any('event=render_finished ' in record.getMessage() for record in caplog.records)
+
+
+@pytest.mark.parametrize('returned', [None, {}])
+def test_cross_document_diagnostics_identify_empty_return(monkeypatch, fake_embedder, caplog, returned):
+    generate = Mock(return_value=returned)
+    monkeypatch.setattr(rag_engine, 'cross_document_query', generate)
+    app = app_with_store(fake_embedder)
+    app.text_input(key='cross_box').set_value('Private question not for logs')
+    button(app, 'Compare documents').click().run()
+    assert not app.exception and len(app.status) == 0
+    generate.assert_called_once()
+    messages = [record.getMessage() for record in caplog.records if record.name == 'docquery.cross_document']
+    assert any('event=generation_returned ' in message for message in messages)
+    assert any('event=lookup ' in message and "'render_eligible': False" in message for message in messages)
+    assert not any('Private question not for logs' in message for message in messages)
 
 
 def test_cross_document_blank_form_does_not_generate(monkeypatch, fake_embedder):

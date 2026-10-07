@@ -1,8 +1,10 @@
 """DocQuery's Streamlit interface. Retrieval and generation live in existing modules."""
 from contextlib import contextmanager
+import logging
 import re
 import time
 import warnings
+from uuid import uuid4
 
 import pandas as pd
 import plotly.express as px
@@ -14,6 +16,13 @@ from rag_engine import answer_question, retrieve, summarize_document, cross_docu
 from evaluation import summarize_retrieval, evaluate_answer_quality, logs_to_dataframe
 from session_utils import stage_uploads
 from citations import validate_citations
+
+cross_logger = logging.getLogger('docquery.cross_document')
+
+
+def cross_diagnostic(event, run_id, **metadata):
+    """Temporary deployment trace: fixed events and scalar metadata only."""
+    cross_logger.warning('Cross-document diagnostic event=%s run=%s metadata=%s', event, run_id, metadata)
 
 st.set_page_config(page_title='DocQuery', page_icon=':material/description:', layout='centered', initial_sidebar_state='expanded')
 st.title('DocQuery')
@@ -55,6 +64,7 @@ def processing(label, pinned=False):
 
 
 def reset_results():
+    cross_diagnostic('reset', 'session', had_result=st.session_state.cross_result is not None)
     st.session_state.demo_active = False
     st.session_state.chat_history = []
     st.session_state.eval_logs = []
@@ -288,25 +298,53 @@ with tab_summary:
         st.download_button('Download summary', summary, 'docquery-summary.md', mime='text/markdown')
 
 with tab_cross:
+    cross_run_id = uuid4().hex[:12]
     st.subheader('Cross-Document')
     st.caption('Compare or combine retrieved evidence across your indexed documents. Inspect which pages were selected.')
     with st.form('cross_document_form'):
         cross_query = st.text_input('Cross-document question', key='cross_box')
         cross_submitted = st.form_submit_button('Compare documents')
+    cross_diagnostic('submit', cross_run_id, submitted=cross_submitted,
+                     query_present=bool(cross_query.strip()), streamlit_version=st.__version__)
     if cross_submitted and cross_query.strip():
         try:
             with processing('Comparing evidence across documents…'):
-                st.session_state.cross_result = cross_document_query(cross_query, st.session_state.store)
+                cross_diagnostic('generation_start', cross_run_id)
+                try:
+                    generated_result = cross_document_query(cross_query, st.session_state.store)
+                except Exception as exc:
+                    cross_diagnostic('generation_failed', cross_run_id, exception_type=type(exc).__name__)
+                    raise
+                answer = generated_result.get('answer') if isinstance(generated_result, dict) else None
+                cross_diagnostic('generation_returned', cross_run_id,
+                                 result_type=type(generated_result).__name__,
+                                 result_length=len(generated_result) if isinstance(generated_result, (dict, str, list)) else None,
+                                 answer_is_string=isinstance(answer, str),
+                                 answer_length=len(answer) if isinstance(answer, str) else None)
+                st.session_state.cross_result = generated_result
+                cross_diagnostic('stored', cross_run_id, key_exists='cross_result' in st.session_state,
+                                 result_present=st.session_state.cross_result is not None)
+            cross_diagnostic('processing_finished', cross_run_id)
         except RuntimeError as exc:
+            cross_diagnostic('handled_error', cross_run_id, exception_type=type(exc).__name__)
             st.error(str(exc))
+    cross_diagnostic('lookup', cross_run_id, key_exists='cross_result' in st.session_state,
+                     result_present=st.session_state.cross_result is not None,
+                     render_eligible=bool(st.session_state.cross_result))
     if st.session_state.cross_result:
         result = st.session_state.cross_result
-        with st.container(border=True):
-            render_with_latex(result['answer'])
-            show_citation_status(result.get('citation_validation'))
-            st.caption(f"Documents retrieved: {', '.join(result['documents_used'])}")
-            with st.expander('Retrieved evidence', expanded=False):
-                show_sources(result['sources'])
+        cross_diagnostic('render_start', cross_run_id)
+        try:
+            with st.container(border=True):
+                render_with_latex(result['answer'])
+                show_citation_status(result.get('citation_validation'))
+                st.caption(f"Documents retrieved: {', '.join(result['documents_used'])}")
+                with st.expander('Retrieved evidence', expanded=False):
+                    show_sources(result['sources'])
+        except Exception as exc:
+            cross_diagnostic('render_failed', cross_run_id, exception_type=type(exc).__name__)
+            raise
+        cross_diagnostic('render_finished', cross_run_id)
 
 with tab_eval:
     st.subheader('Frozen offline benchmark')
