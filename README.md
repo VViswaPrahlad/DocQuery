@@ -105,6 +105,12 @@ scripts/                Evaluation runner and privacy audit
 docs/                   Evaluation report and demo screenshots
 ```
 
+## Answerability and abstention
+
+Chat and cross-document answers now use a shared structured answer-or-abstain contract. Answers require exact supporting spans from retrieved chunks; invalid responses are withheld and recorded separately from semantic refusals. Retrieved evidence remains inspectable.
+
+This validates provenance, **not entailment**. Live refusal accuracy has not yet been measured. The October 7 retrieval benchmark remains unchanged. See [the answerability evaluation plan and validation status](docs/answerability_evaluation.md) for the separate paired evaluation, fresh cases, and release criteria.
+
 ## Notes / Limitations
 
 Citation-reference validation checks whether cited document/page references belong to retrieved evidence; it does not prove factual correctness or entailment. Complex PDF layouts and OCR may not extract perfectly.

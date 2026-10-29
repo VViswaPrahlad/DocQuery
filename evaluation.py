@@ -20,6 +20,7 @@ import time
 import json
 from typing import List, Dict
 import pandas as pd
+from answerability import decision_metrics  # Shared abstention metrics; no LLM judge dependency.
 
 from rag_engine import retrieve, get_client, GROK_MODEL, _safe_chat_completion
 from ingest import VectorStore

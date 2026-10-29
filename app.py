@@ -88,6 +88,13 @@ def show_citation_status(validation):
         st.warning('No recognized page citations. Inspect the retrieved evidence before relying on this response.')
 
 
+def show_decision(result):
+    if result.get('decision') == 'abstain':
+        st.info('Not enough evidence to answer · ' + result.get('reason', 'insufficient_evidence').replace('_', ' '))
+    elif result.get('decision') == 'error':
+        st.warning('Answer withheld because generation or evidence validation failed.')
+
+
 def show_sources(sources):
     for rank, source in enumerate(sources, 1):
         with st.container(border=True):
@@ -244,6 +251,7 @@ with tab_chat:
             else:
                 render_with_latex(message['content'])
             if message['role'] == 'assistant':
+                show_decision(message)
                 show_citation_status(message.get('citation_validation'))
                 if message.get('sources'):
                     with st.expander(f"Retrieved evidence ({len(message['sources'])})", expanded=False):
@@ -325,6 +333,12 @@ with tab_cross:
                                  answer_is_string=isinstance(answer, str),
                                  answer_length=len(answer) if isinstance(answer, str) else None)
                 st.session_state.cross_result = generated_result
+                if isinstance(generated_result, dict) and isinstance(generated_result.get('answer'), str):
+                    retr = summarize_retrieval(cross_query, generated_result.get('sources', []), generated_result.get('retrieval_seconds', 0))
+                    st.session_state.eval_logs.append({**retr, 'flow': 'cross_document',
+                        'decision': generated_result.get('decision'), 'reason': generated_result.get('reason'),
+                        'validation_status': generated_result.get('validation_status'),
+                        'groundedness': None, 'relevance': None, 'judge_status': 'not_requested'})
                 cross_diagnostic('stored', cross_run_id, key_exists='cross_result' in st.session_state,
                                  result_present=st.session_state.cross_result is not None)
             cross_diagnostic('processing_finished', cross_run_id)
@@ -340,6 +354,7 @@ with tab_cross:
         try:
             with st.container(border=True):
                 render_with_latex(result['answer'])
+                show_decision(result)
                 show_citation_status(result.get('citation_validation'))
                 st.caption(f"Documents retrieved: {', '.join(result['documents_used'])}")
                 with st.expander('Retrieved evidence', expanded=False):
@@ -370,7 +385,7 @@ with tab_eval:
         st.caption('No chat queries logged yet. Ask a question to inspect this session; no quality scoring runs automatically.')
     else:
         st.caption(f"{len(df)} queries logged · Rank scores describe retrieval ordering, not answer confidence.")
-        columns = [c for c in ('query', 'num_results', 'latency_sec', 'answer_latency_sec', 'citation_status') if c in df]
+        columns = [c for c in ('query', 'num_results', 'latency_sec', 'answer_latency_sec', 'decision', 'reason', 'citation_status') if c in df]
         labels = {'query': 'Question', 'num_results': 'Evidence chunks', 'latency_sec': 'Retrieval (s)',
                   'answer_latency_sec': 'Answer (s)', 'citation_status': 'Citation references'}
         st.dataframe(df[columns].rename(columns=labels), hide_index=True, width='stretch')
@@ -413,19 +428,22 @@ if chat_query:
             elapsed = time.perf_counter() - start
             st.session_state.chat_history.append({'role': 'assistant', 'content': result['answer'],
                                                  'sources': result['sources'], 'citation_validation': result.get('citation_validation'),
-                                                 'elapsed': elapsed})
+                                                 'elapsed': elapsed, 'decision': result.get('decision'),
+                                                 'reason': result.get('reason'), 'validation_status': result.get('validation_status')})
             st.session_state.last_sources = result['sources']
             st.session_state.last_elapsed = elapsed
-            if result['sources']:
-                if judge_enabled:
-                    status.update(label='Scoring answer quality…')
-                    judge = evaluate_answer_quality(chat_query, result['sources'], result['answer'])
-                else:
-                    judge = {'groundedness': None, 'relevance': None, 'judge_status': 'not_requested'}
-                retr = summarize_retrieval(chat_query, result['sources'], result.get('retrieval_seconds', 0))
-                st.session_state.eval_logs.append({**retr, **judge, 'answer_latency_sec': round(elapsed, 3),
-                                                  'citation_status': result.get('citation_validation', {}).get('status'),
-                                                  'scope': scope, 'retrieval_query': result.get('retrieval_query', chat_query)})
+            if judge_enabled and result.get('decision', 'answer') == 'answer' and result['sources']:
+                status.update(label='Scoring answer quality…')
+                judge = evaluate_answer_quality(chat_query, result['sources'], result['answer'])
+            else:
+                judge = {'groundedness': None, 'relevance': None, 'judge_status': 'not_requested'}
+            retr = summarize_retrieval(chat_query, result['sources'], result.get('retrieval_seconds', 0))
+            st.session_state.eval_logs.append({**retr, **judge, 'answer_latency_sec': round(elapsed, 3),
+                                              'citation_status': result.get('citation_validation', {}).get('status'),
+                                              'scope': scope, 'retrieval_query': result.get('retrieval_query', chat_query),
+                                              'decision': result.get('decision'), 'reason': result.get('reason'),
+                                              'validation_status': result.get('validation_status'),
+                                              'decision_seconds': result.get('decision_seconds')})
     except RuntimeError as exc:
         st.session_state.chat_history.append({'role': 'assistant', 'content': str(exc), 'error': True})
         st.session_state.last_sources = []

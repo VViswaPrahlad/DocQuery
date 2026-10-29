@@ -12,7 +12,7 @@ import rag_engine as rag
 
 def response():
     return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(
-        content="Battery storage supports the grid [Source: a.pdf, page 1]."))])
+        content='{"decision":"answer","claims":[{"text":"Battery storage supports the grid.","supports":[{"chunk_id":"a","quote":"Battery storage supports the grid."}]}],"reason":null}'))])
 
 
 def status_error(status, code=None, message="Synthetic provider failure", headers=None):
