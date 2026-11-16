@@ -1,12 +1,22 @@
 # DocQuery
 
-Multi-document RAG with evaluated retrieval, evidence inspection, and page-level citations.
+**Ask questions across multiple PDFs, inspect retrieved evidence, and trace generated answers to source pages.**
 
-[Live Demo](https://docquery-rag.streamlit.app) | [GitHub Repository](https://github.com/VViswaPrahlad/DocQuery)
+[**Try Live Demo**](https://docquery-rag.streamlit.app) · [Retrieval Evaluation](docs/evaluation.md) · [Retrieval implementation](ingest.py)
 
-DocQuery lets you ask questions across PDFs while keeping the source passages easy to inspect. The Streamlit app retrieves relevant text, answers through a Groq-hosted LLM, and shows document/page references alongside the evidence. We also compared retrieval strategies with a small offline benchmark.
+## Why DocQuery?
 
-## Demo
+A typical document chatbot can produce convincing text without making its evidence easy to verify. DocQuery combines page-aware PDF ingestion (with OCR fallback), BGE embeddings, FAISS dense search, optional BM25/RRF retrieval and a Groq-hosted LLM with inspectable supporting passages. It supports document-scoped and cross-document questions, follow-ups, and summaries.
+
+**Demo in one minute:** Open the live app, select **Try Demo** to load two fictional documents (or upload PDFs), ask one suggested question and inspect the cited source pages. Generation needs a working provider connection; uploaded content excerpts are sent to the configured provider.
+
+**Measured retrieval result:** On a small offline *fictional* six-document / 36-question fixture, dense FAISS achieved **Hit@3 1.000** and **MRR@3 0.931**, compared with hybrid RRF's **0.931** and **0.810**. Dense performed better on this fixture; these are retrieval scores, not answer-grounding or general-world reliability guarantees.
+
+**Pipeline:** PDFs → text / OCR → page-aware chunks → BGE embeddings → FAISS / BM25 / RRF → retrieved evidence → Groq-hosted generation → answer with page references.
+
+For implementation and limitations, see [retrieval](ingest.py), [fusion](hybrid_search.py), [generation](rag_engine.py), [evaluation](docs/evaluation.md), and [tests](tests/).
+
+## Demo screenshots
 
 Choose **Try Demo** to load two fictional reports, or upload your own PDFs.
 
