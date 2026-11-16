@@ -2,7 +2,7 @@
 
 **Ask questions across multiple PDFs, inspect retrieved evidence, and trace generated answers to source pages.**
 
-[**Try Live Demo**](https://docquery-rag.streamlit.app) · [Retrieval Evaluation](docs/evaluation.md) · [Architecture and Interview Guide](docs/README.md)
+[**Try Live Demo**](https://docquery-rag.streamlit.app) · [Retrieval Evaluation](docs/evaluation.md) · [Retrieval implementation](ingest.py)
 
 ## Why DocQuery?
 
@@ -14,7 +14,7 @@ A typical document chatbot can produce convincing text without making its eviden
 
 **Pipeline:** PDFs → text / OCR → page-aware chunks → BGE embeddings → FAISS / BM25 / RRF → retrieved evidence → Groq-hosted generation → answer with page references.
 
-For code layout, limitations, CI and a short interview walkthrough, see the [documentation guide](docs/README.md).
+For implementation and limitations, see [retrieval](ingest.py), [fusion](hybrid_search.py), [generation](rag_engine.py), [evaluation](docs/evaluation.md), and [tests](tests/).
 
 ## Demo screenshots
 
