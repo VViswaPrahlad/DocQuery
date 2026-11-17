@@ -1,0 +1,462 @@
+{
+  "baseline_sha256": "54ce50f7d70ae5bb61d990e6ae2da9d248561ebea15ce7369faf5635d505ae07",
+  "cases": [
+    {
+      "id": "E01",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "battery_brief.pdf",
+          "page": 4
+        }
+      ],
+      "support": "contactor failed to open",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "E02",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "fleet_report.pdf",
+          "page": 2
+        }
+      ],
+      "support": "sensor harness",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "E03",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "river_operations.pdf",
+          "page": 5
+        }
+      ],
+      "support": "antenna cable",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "E04",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "building_energy.pdf",
+          "page": 4
+        }
+      ],
+      "support": "occupancy sensor",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "E05",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "archive_handbook.pdf",
+          "page": 4
+        }
+      ],
+      "support": "sealed collection",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "E06",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "battery_brief.pdf",
+          "page": 3
+        }
+      ],
+      "support": "isolation relay",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "S01",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "battery_brief.pdf",
+          "page": 3
+        }
+      ],
+      "support": "liquid cooling loop",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "S02",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "archive_handbook.pdf",
+          "page": 1
+        }
+      ],
+      "support": "fading and embrittlement",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "S03",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "fleet_report.pdf",
+          "page": 4
+        }
+      ],
+      "support": "zero latitude",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "S04",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "building_energy.pdf",
+          "page": 1
+        }
+      ],
+      "support": "rooms are empty",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "S05",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "river_operations.pdf",
+          "page": 2
+        }
+      ],
+      "support": "physical staff gauge",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "S06",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "incident_playbook.pdf",
+          "page": 2
+        }
+      ],
+      "support": "disappear after a reset",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "F01",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "battery_brief.pdf",
+          "page": 1
+        }
+      ],
+      "support": "24 megawatt-hours",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "F02",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "fleet_report.pdf",
+          "page": 1
+        }
+      ],
+      "support": "DBSCAN",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "F03",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "archive_handbook.pdf",
+          "page": 1
+        }
+      ],
+      "support": "45 percent",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "F04",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "river_operations.pdf",
+          "page": 3
+        }
+      ],
+      "support": "3.2 metres",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "D01",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "river_operations.pdf",
+          "page": 4
+        }
+      ],
+      "support": "80000 dollars",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "D02",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "fleet_report.pdf",
+          "page": 3
+        }
+      ],
+      "support": "November 2027",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "D03",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "building_energy.pdf",
+          "page": 3
+        }
+      ],
+      "support": "120 days",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "D04",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "fleet_report.pdf",
+          "page": 2
+        }
+      ],
+      "support": "sensor harness",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "C01",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "battery_brief.pdf",
+          "page": 5
+        }
+      ],
+      "support": "Cold weather",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "C02",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "fleet_report.pdf",
+          "page": 2
+        }
+      ],
+      "support": "30 days",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "C03",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "river_operations.pdf",
+          "page": 5
+        }
+      ],
+      "support": "circular buffer",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "C04",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "archive_handbook.pdf",
+          "page": 3
+        }
+      ],
+      "support": "two separate sites",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "C05",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "building_energy.pdf",
+          "page": 2
+        }
+      ],
+      "support": "120 minutes",
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "C06",
+      "answerable": false,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Aurora has no schedule; the intended document is identifiable from the assistant answer, which the current retrieval heuristic ignores.",
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "X01",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "battery_brief.pdf",
+          "page": 4
+        },
+        {
+          "doc_name": "fleet_report.pdf",
+          "page": 2
+        }
+      ],
+      "support": null,
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "X02",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "archive_handbook.pdf",
+          "page": 3
+        },
+        {
+          "doc_name": "river_operations.pdf",
+          "page": 5
+        }
+      ],
+      "support": null,
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "X03",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "battery_brief.pdf",
+          "page": 4
+        },
+        {
+          "doc_name": "fleet_report.pdf",
+          "page": 2
+        }
+      ],
+      "support": null,
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "X04",
+      "answerable": true,
+      "relevant_pages": [
+        {
+          "doc_name": "battery_brief.pdf",
+          "page": 4
+        },
+        {
+          "doc_name": "fleet_report.pdf",
+          "page": 2
+        },
+        {
+          "doc_name": "river_operations.pdf",
+          "page": 2
+        },
+        {
+          "doc_name": "building_energy.pdf",
+          "page": 3
+        }
+      ],
+      "support": null,
+      "reason": null,
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "U01",
+      "answerable": false,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Funding program is named; its amount is omitted. Other projects have amounts.",
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "U02",
+      "answerable": false,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "No executive identities or salaries are given.",
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "U03",
+      "answerable": false,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "No credentials are present in the fictional documents.",
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "U04",
+      "answerable": false,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "A digitization grant is not a collection valuation.",
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "U05",
+      "answerable": false,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "No daily readings are published.",
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    },
+    {
+      "id": "U06",
+      "answerable": false,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "This protocol is absent from every document.",
+      "review": "Check every requested component against labelled pages; relevant-page presence alone is insufficient."
+    }
+  ]
+}

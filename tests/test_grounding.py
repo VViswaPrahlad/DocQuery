@@ -34,7 +34,7 @@ def test_generation_preserves_exact_source_metadata(monkeypatch, fake_embedder):
     chunk = Chunk("report_p2_c1", "report.pdf", 2, "Battery storage supports the grid.", "ocr")
     store = VectorStore(3)
     store.add(fake_embedder.embed([chunk.text]), [chunk])
-    response = SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content="Supports the grid [Source: report.pdf, page 2]."))])
+    response = SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content='{"decision":"answer","claims":[{"text":"Supports the grid","supports":[{"chunk_id":"report_p2_c1","quote":"Battery storage supports the grid."}]}],"reason":null}'))])
     monkeypatch.setattr(rag_engine, "get_client", lambda: object())
     monkeypatch.setattr(rag_engine, "_safe_chat_completion", lambda *a, **kw: response)
     result = rag_engine.answer_question("What supports the grid?", store)

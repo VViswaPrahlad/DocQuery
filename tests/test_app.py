@@ -391,3 +391,19 @@ def test_demo_loading_precedes_indexing_and_clears(monkeypatch, fake_embedder, f
         assert any("Could not load the demo" in error.value for error in app.error)
     app.run()
     assert mock.call_count == 1
+
+
+@pytest.mark.parametrize('decision,sources', [('abstain', []), ('abstain', [{'doc_name':'a.pdf','page':1,'score':0.03,'text':'Evidence without the requested fact','chunk_id':'a'}]), ('error', [])])
+def test_answerability_decisions_are_visible_and_logged(monkeypatch, fake_embedder, decision, sources):
+    result = {'answer': 'Not enough evidence' if decision == 'abstain' else 'Validation failed',
+              'decision': decision, 'reason': 'insufficient_evidence' if decision == 'abstain' else 'invalid_output',
+              'sources': sources, 'validation_status': 'valid' if decision == 'abstain' else 'invalid',
+              'citation_validation': {'status':'not_applicable'}}
+    monkeypatch.setattr(rag_engine, 'answer_question', Mock(return_value=result))
+    app = app_with_store(fake_embedder)
+    app.chat_input[0].set_value('What is the grant amount?').run()
+    assert not app.exception
+    assert app.session_state['eval_logs'][-1]['decision'] == decision
+    assert app.session_state['chat_history'][-1]['decision'] == decision
+    assert app.info if decision == 'abstain' else app.warning
+    assert not any('No recognized page citations' in w.value for w in app.warning)

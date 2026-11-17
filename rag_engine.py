@@ -10,7 +10,8 @@ Retrieval : Hybrid search -- FAISS semantic search over BGE embeddings
             USE_HYBRID_SEARCH=false.
 Generation: Groq API (OpenAI-compatible endpoint).
 
-Generation requests citations in the form [Source: filename, page X].
+Generation returns structured claims and exact supporting spans or abstains.
+The application renders citations in the form [Source: filename, page X].
 Source metadata provides traceability. Citation reference validation checks
 membership in retrieved document/page evidence, not factual correctness
 or semantic entailment.
@@ -26,6 +27,7 @@ from typing import List, Dict
 from openai import OpenAI, RateLimitError, APIError, APITimeoutError, APIConnectionError
 from config import get_config, positive_int
 from citations import validate_citations, normalize_citations
+from answerability import PROMPT as ANSWERABILITY_PROMPT, REFUSAL, parse_response
 
 from ingest import EmbeddingModel, VectorStore
 
@@ -292,49 +294,43 @@ def answer_question(query: str, store: VectorStore, top_k: int = TOP_K, chat_his
     started = _time.perf_counter()
     results = retrieve(retrieval_query, store, top_k=top_k, doc_filter=doc_filter)
     retrieval_seconds = _time.perf_counter() - started
-    if not results:
-        return {"answer": "I don't have enough indexed evidence to answer this question. Upload a readable PDF or change the document selection.", "sources": [],
-                "retrieval_query": retrieval_query, "retrieval_seconds": retrieval_seconds,
-                "citation_validation": validate_citations("", [])}
-    context = _format_context(results)
+    result = answer_from_results(query, results, chat_history)
+    result.update(retrieval_query=retrieval_query, retrieval_seconds=retrieval_seconds)
+    return result
 
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-    if chat_history:
+
+def answer_from_results(query, results, chat_history=None):
+    """Shared answer-or-abstain boundary; retrieval is deliberately unchanged."""
+    started = _time.perf_counter()
+    sources = [{"doc_name": r["chunk"].doc_name, "page": r["chunk"].page_number,
+                "score": r["score"], "text": r["chunk"].text,
+                "source": r["chunk"].source, "chunk_id": r["chunk"].chunk_id,
+                "score_type": r.get("score_type", "rrf")} for r in results]
+    if not sources:
+        result = {"answer": REFUSAL, "decision": "abstain", "reason": "no_evidence",
+                  "claims": [], "validation_status": "not_needed"}
+    else:
+        messages = [{"role": "system", "content": ANSWERABILITY_PROMPT}]
         messages.extend(_history_messages(chat_history))
-    messages.append(
-        {
-            "role": "user",
-            "content": f"Context:\n\n{context}\n\nQuestion: {query}\n\nAnswer with citations:",
-        }
-    )
-
-    client = get_client()
-    response = _safe_chat_completion(client,
-        model=GROK_MODEL,
-        messages=messages,
-        temperature=0.2,
-        max_tokens=1000,
-    )
-    answer_text = normalize_citations(response.choices[0].message.content)
-
-    result = {
-        "answer": answer_text,
-        "retrieval_query": retrieval_query,
-        "retrieval_seconds": retrieval_seconds,
-        "sources": [
-            {
-                "doc_name": r["chunk"].doc_name,
-                "page": r["chunk"].page_number,
-                "score": r["score"],
-                "text": r["chunk"].text,
-                "source": r["chunk"].source,
-                "chunk_id": r["chunk"].chunk_id,
-                "score_type": r.get("score_type", "rrf"),
-            }
-            for r in results
-        ],
-    }
-    result["citation_validation"] = validate_citations(answer_text, result["sources"])
+        messages.append({"role": "user", "content":
+                         f"Current evidence:\n{_format_context(results)}\n\nQuestion: {query}"})
+        try:
+            response = _safe_chat_completion(get_client(), model=GROK_MODEL,
+                messages=messages, temperature=0.0, max_tokens=2000,
+                response_format={"type": "json_object"})
+            result = parse_response(response.choices[0].message.content, sources)
+            result["raw_response"] = response.choices[0].message.content
+            usage = getattr(response, "usage", None)
+            result["usage"] = usage.model_dump() if hasattr(usage, "model_dump") else None
+        except RuntimeError:
+            result = {"answer": "The answer provider is unavailable. Please retry.",
+                      "decision": "error", "reason": "provider_error", "claims": [],
+                      "validation_status": "not_run"}
+    result["sources"] = sources
+    result["decision_seconds"] = _time.perf_counter() - started
+    result["citation_validation"] = validate_citations(result["answer"], sources) if result["decision"] == "answer" else {
+        "status": "not_applicable", "valid": [], "invalid": [], "reference_precision": None,
+        "limitation": "No factual answer was returned; retrieved evidence remains inspectable."}
     return result
 
 
@@ -398,48 +394,11 @@ def summarize_document(doc_name: str, store: VectorStore, max_chunks: int = 40) 
 
 
 def cross_document_query(query: str, store: VectorStore, top_k: int = 8) -> Dict:
-    """
-    Same as answer_question but explicitly retrieves more broadly and instructs
-    the model to compare/contrast across documents when multiple doc_names appear
-    in the retrieved set -- used for the 'Cross-Document Information Retrieval' feature.
-    """
+    """Cross-document coverage retrieval with the shared answer/refusal contract."""
+    started = _time.perf_counter()
     results = retrieve_multi_document(query, store, top_k=top_k)
-    if not results:
-        return {"answer": "I don't have enough indexed evidence to answer this question.", "documents_used": [], "sources": [], "citation_validation": validate_citations("", [])}
-    doc_names = sorted(set(r["chunk"].doc_name for r in results))
-    context = _format_context(results)
-
-    client = get_client()
-    response = _safe_chat_completion(client,
-        model=GROK_MODEL,
-        messages=[
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT
-                + f"\nThe retrieved context spans these documents: {', '.join(doc_names)}. "
-                "If relevant information appears in more than one document, explicitly compare "
-                "or synthesize across them.",
-            },
-            {"role": "user", "content": f"Context:\n\n{context}\n\nQuestion: {query}\n\nAnswer with citations:"},
-        ],
-        temperature=0.2,
-        max_tokens=1000,
-    )
-    result = {
-        "answer": normalize_citations(response.choices[0].message.content),
-        "documents_used": doc_names,
-        "sources": [
-            {
-                "doc_name": r["chunk"].doc_name,
-                "page": r["chunk"].page_number,
-                "score": r["score"],
-                "source": r["chunk"].source,
-                "chunk_id": r["chunk"].chunk_id,
-                "text": r["chunk"].text,
-                "score_type": r.get("score_type", "rrf"),
-            }
-            for r in results
-        ],
-    }
-    result["citation_validation"] = validate_citations(result["answer"], result["sources"])
+    retrieval_seconds = _time.perf_counter() - started
+    result = answer_from_results(query, results)
+    result.update(documents_used=sorted({r["chunk"].doc_name for r in results}),
+                  retrieval_query=query, retrieval_seconds=retrieval_seconds)
     return result

@@ -1,0 +1,991 @@
+{
+  "description": "Pre-run v1 extension. 20 development / 40 held-out cases, disjoint entity families. Synthetic templated challenge; not real-world generalization. No provider outputs used during authorship.",
+  "documents": [
+    {
+      "name": "aster.pdf",
+      "pages": [
+        "Aster storage project stores 12 MWh. It is inspected every 21 days. A cooling loop removes heat during charging.",
+        "Aster is supported by the Community Storage Fund. Its monetary grant amount and completion schedule are not published. The adjacent Aster Transit project received 40000 dollars and completes in June 2029. These figures describe Transit only.",
+        "Aster annual report: annual consumption is 900 MWh. Daily consumption readings are not published. No collection market valuation or administrator password is provided."
+      ],
+      "split": "dev"
+    },
+    {
+      "name": "birch.pdf",
+      "pages": [
+        "Birch storage project stores 18 MWh. It is inspected every 35 days. A cooling loop removes heat during charging.",
+        "Birch is supported by the Community Storage Fund. Its monetary grant amount and completion schedule are not published. The adjacent Birch Transit project received 55000 dollars and completes in June 2029. These figures describe Transit only.",
+        "Birch annual report: annual consumption is 900 MWh. Daily consumption readings are not published. No collection market valuation or administrator password is provided."
+      ],
+      "split": "dev"
+    },
+    {
+      "name": "cobalt.pdf",
+      "pages": [
+        "Cobalt storage project stores 26 MWh. It is inspected every 42 days. A cooling loop removes heat during charging.",
+        "Cobalt is supported by the Community Storage Fund. Its monetary grant amount and completion schedule are not published. The adjacent Cobalt Transit project received 62000 dollars and completes in June 2029. These figures describe Transit only.",
+        "Cobalt annual report: annual consumption is 900 MWh. Daily consumption readings are not published. No collection market valuation or administrator password is provided."
+      ],
+      "split": "heldout"
+    },
+    {
+      "name": "dahlia.pdf",
+      "pages": [
+        "Dahlia storage project stores 32 MWh. It is inspected every 56 days. A cooling loop removes heat during charging.",
+        "Dahlia is supported by the Community Storage Fund. Its monetary grant amount and completion schedule are not published. The adjacent Dahlia Transit project received 71000 dollars and completes in June 2029. These figures describe Transit only.",
+        "Dahlia annual report: annual consumption is 900 MWh. Daily consumption readings are not published. No collection market valuation or administrator password is provided."
+      ],
+      "split": "heldout"
+    },
+    {
+      "name": "elm.pdf",
+      "pages": [
+        "Elm storage project stores 44 MWh. It is inspected every 63 days. A cooling loop removes heat during charging.",
+        "Elm is supported by the Community Storage Fund. Its monetary grant amount and completion schedule are not published. The adjacent Elm Transit project received 83000 dollars and completes in June 2029. These figures describe Transit only.",
+        "Elm annual report: annual consumption is 900 MWh. Daily consumption readings are not published. No collection market valuation or administrator password is provided."
+      ],
+      "split": "heldout"
+    },
+    {
+      "name": "flint.pdf",
+      "pages": [
+        "Flint storage project stores 52 MWh. It is inspected every 70 days. A cooling loop removes heat during charging.",
+        "Flint is supported by the Community Storage Fund. Its monetary grant amount and completion schedule are not published. The adjacent Flint Transit project received 97000 dollars and completes in June 2029. These figures describe Transit only.",
+        "Flint annual report: annual consumption is 900 MWh. Daily consumption readings are not published. No collection market valuation or administrator password is provided."
+      ],
+      "split": "heldout"
+    }
+  ],
+  "cases": [
+    {
+      "id": "Aster_capacity",
+      "split": "dev",
+      "kind": "capacity",
+      "question": "How much energy does Aster storage hold?",
+      "scope": [
+        "aster.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "aster.pdf",
+          "page": 1
+        }
+      ],
+      "support": "12 MWh",
+      "reason": null
+    },
+    {
+      "id": "Aster_interval",
+      "split": "dev",
+      "kind": "interval",
+      "question": "How frequently is Aster storage inspected?",
+      "scope": [
+        "aster.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "aster.pdf",
+          "page": 1
+        }
+      ],
+      "support": "21 days",
+      "reason": null
+    },
+    {
+      "id": "Aster_cooling",
+      "split": "dev",
+      "kind": "cooling",
+      "question": "How does Aster remove heat while charging?",
+      "scope": [
+        "aster.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "aster.pdf",
+          "page": 1
+        }
+      ],
+      "support": "cooling loop",
+      "reason": null
+    },
+    {
+      "id": "Aster_transit_amount",
+      "split": "dev",
+      "kind": "transit_amount",
+      "question": "What grant amount did Aster Transit receive?",
+      "scope": [
+        "aster.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "aster.pdf",
+          "page": 2
+        }
+      ],
+      "support": "40000 dollars",
+      "reason": null
+    },
+    {
+      "id": "Aster_transit_schedule",
+      "split": "dev",
+      "kind": "transit_schedule",
+      "question": "When does Aster Transit complete?",
+      "scope": [
+        "aster.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "aster.pdf",
+          "page": 2
+        }
+      ],
+      "support": "June 2029",
+      "reason": null
+    },
+    {
+      "id": "Aster_storage_amount",
+      "split": "dev",
+      "kind": "storage_amount",
+      "question": "How much grant money did Aster storage receive?",
+      "scope": [
+        "aster.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Aster_storage_schedule",
+      "split": "dev",
+      "kind": "storage_schedule",
+      "question": "When does Aster storage complete?",
+      "scope": [
+        "aster.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Aster_daily",
+      "split": "dev",
+      "kind": "daily",
+      "question": "How much energy did Aster use on May 3, 2028?",
+      "scope": [
+        "aster.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Aster_valuation",
+      "split": "dev",
+      "kind": "valuation",
+      "question": "What is the market valuation of Aster?",
+      "scope": [
+        "aster.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Aster_comparison",
+      "split": "dev",
+      "kind": "comparison",
+      "question": "Compare the completion dates of Aster storage and Aster Transit.",
+      "scope": [
+        "aster.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Birch_capacity",
+      "split": "dev",
+      "kind": "capacity",
+      "question": "How much energy does Birch storage hold?",
+      "scope": [
+        "birch.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "birch.pdf",
+          "page": 1
+        }
+      ],
+      "support": "18 MWh",
+      "reason": null
+    },
+    {
+      "id": "Birch_interval",
+      "split": "dev",
+      "kind": "interval",
+      "question": "How frequently is Birch storage inspected?",
+      "scope": [
+        "birch.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "birch.pdf",
+          "page": 1
+        }
+      ],
+      "support": "35 days",
+      "reason": null
+    },
+    {
+      "id": "Birch_cooling",
+      "split": "dev",
+      "kind": "cooling",
+      "question": "How does Birch remove heat while charging?",
+      "scope": [
+        "birch.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "birch.pdf",
+          "page": 1
+        }
+      ],
+      "support": "cooling loop",
+      "reason": null
+    },
+    {
+      "id": "Birch_transit_amount",
+      "split": "dev",
+      "kind": "transit_amount",
+      "question": "What grant amount did Birch Transit receive?",
+      "scope": [
+        "birch.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "birch.pdf",
+          "page": 2
+        }
+      ],
+      "support": "55000 dollars",
+      "reason": null
+    },
+    {
+      "id": "Birch_transit_schedule",
+      "split": "dev",
+      "kind": "transit_schedule",
+      "question": "When does Birch Transit complete?",
+      "scope": [
+        "birch.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "birch.pdf",
+          "page": 2
+        }
+      ],
+      "support": "June 2029",
+      "reason": null
+    },
+    {
+      "id": "Birch_storage_amount",
+      "split": "dev",
+      "kind": "storage_amount",
+      "question": "How much grant money did Birch storage receive?",
+      "scope": [
+        "birch.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Birch_storage_schedule",
+      "split": "dev",
+      "kind": "storage_schedule",
+      "question": "When does Birch storage complete?",
+      "scope": [
+        "birch.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Birch_daily",
+      "split": "dev",
+      "kind": "daily",
+      "question": "How much energy did Birch use on May 3, 2028?",
+      "scope": [
+        "birch.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Birch_valuation",
+      "split": "dev",
+      "kind": "valuation",
+      "question": "What is the market valuation of Birch?",
+      "scope": [
+        "birch.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Birch_comparison",
+      "split": "dev",
+      "kind": "comparison",
+      "question": "Compare the completion dates of Birch storage and Birch Transit.",
+      "scope": [
+        "birch.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Cobalt_capacity",
+      "split": "heldout",
+      "kind": "capacity",
+      "question": "How much energy does Cobalt storage hold?",
+      "scope": [
+        "cobalt.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "cobalt.pdf",
+          "page": 1
+        }
+      ],
+      "support": "26 MWh",
+      "reason": null
+    },
+    {
+      "id": "Cobalt_interval",
+      "split": "heldout",
+      "kind": "interval",
+      "question": "How frequently is Cobalt storage inspected?",
+      "scope": [
+        "cobalt.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "cobalt.pdf",
+          "page": 1
+        }
+      ],
+      "support": "42 days",
+      "reason": null
+    },
+    {
+      "id": "Cobalt_cooling",
+      "split": "heldout",
+      "kind": "cooling",
+      "question": "How does Cobalt remove heat while charging?",
+      "scope": [
+        "cobalt.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "cobalt.pdf",
+          "page": 1
+        }
+      ],
+      "support": "cooling loop",
+      "reason": null
+    },
+    {
+      "id": "Cobalt_transit_amount",
+      "split": "heldout",
+      "kind": "transit_amount",
+      "question": "What grant amount did Cobalt Transit receive?",
+      "scope": [
+        "cobalt.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "cobalt.pdf",
+          "page": 2
+        }
+      ],
+      "support": "62000 dollars",
+      "reason": null
+    },
+    {
+      "id": "Cobalt_transit_schedule",
+      "split": "heldout",
+      "kind": "transit_schedule",
+      "question": "When does Cobalt Transit complete?",
+      "scope": [
+        "cobalt.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "cobalt.pdf",
+          "page": 2
+        }
+      ],
+      "support": "June 2029",
+      "reason": null
+    },
+    {
+      "id": "Cobalt_storage_amount",
+      "split": "heldout",
+      "kind": "storage_amount",
+      "question": "How much grant money did Cobalt storage receive?",
+      "scope": [
+        "cobalt.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Cobalt_storage_schedule",
+      "split": "heldout",
+      "kind": "storage_schedule",
+      "question": "When does Cobalt storage complete?",
+      "scope": [
+        "cobalt.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Cobalt_daily",
+      "split": "heldout",
+      "kind": "daily",
+      "question": "How much energy did Cobalt use on May 3, 2028?",
+      "scope": [
+        "cobalt.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Cobalt_valuation",
+      "split": "heldout",
+      "kind": "valuation",
+      "question": "What is the market valuation of Cobalt?",
+      "scope": [
+        "cobalt.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Cobalt_comparison",
+      "split": "heldout",
+      "kind": "comparison",
+      "question": "Compare the completion dates of Cobalt storage and Cobalt Transit.",
+      "scope": [
+        "cobalt.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Dahlia_capacity",
+      "split": "heldout",
+      "kind": "capacity",
+      "question": "How much energy does Dahlia storage hold?",
+      "scope": [
+        "dahlia.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "dahlia.pdf",
+          "page": 1
+        }
+      ],
+      "support": "32 MWh",
+      "reason": null
+    },
+    {
+      "id": "Dahlia_interval",
+      "split": "heldout",
+      "kind": "interval",
+      "question": "How frequently is Dahlia storage inspected?",
+      "scope": [
+        "dahlia.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "dahlia.pdf",
+          "page": 1
+        }
+      ],
+      "support": "56 days",
+      "reason": null
+    },
+    {
+      "id": "Dahlia_cooling",
+      "split": "heldout",
+      "kind": "cooling",
+      "question": "How does Dahlia remove heat while charging?",
+      "scope": [
+        "dahlia.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "dahlia.pdf",
+          "page": 1
+        }
+      ],
+      "support": "cooling loop",
+      "reason": null
+    },
+    {
+      "id": "Dahlia_transit_amount",
+      "split": "heldout",
+      "kind": "transit_amount",
+      "question": "What grant amount did Dahlia Transit receive?",
+      "scope": [
+        "dahlia.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "dahlia.pdf",
+          "page": 2
+        }
+      ],
+      "support": "71000 dollars",
+      "reason": null
+    },
+    {
+      "id": "Dahlia_transit_schedule",
+      "split": "heldout",
+      "kind": "transit_schedule",
+      "question": "When does Dahlia Transit complete?",
+      "scope": [
+        "dahlia.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "dahlia.pdf",
+          "page": 2
+        }
+      ],
+      "support": "June 2029",
+      "reason": null
+    },
+    {
+      "id": "Dahlia_storage_amount",
+      "split": "heldout",
+      "kind": "storage_amount",
+      "question": "How much grant money did Dahlia storage receive?",
+      "scope": [
+        "dahlia.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Dahlia_storage_schedule",
+      "split": "heldout",
+      "kind": "storage_schedule",
+      "question": "When does Dahlia storage complete?",
+      "scope": [
+        "dahlia.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Dahlia_daily",
+      "split": "heldout",
+      "kind": "daily",
+      "question": "How much energy did Dahlia use on May 3, 2028?",
+      "scope": [
+        "dahlia.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Dahlia_valuation",
+      "split": "heldout",
+      "kind": "valuation",
+      "question": "What is the market valuation of Dahlia?",
+      "scope": [
+        "dahlia.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Dahlia_comparison",
+      "split": "heldout",
+      "kind": "comparison",
+      "question": "Compare the completion dates of Dahlia storage and Dahlia Transit.",
+      "scope": [
+        "dahlia.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Elm_capacity",
+      "split": "heldout",
+      "kind": "capacity",
+      "question": "How much energy does Elm storage hold?",
+      "scope": [
+        "elm.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "elm.pdf",
+          "page": 1
+        }
+      ],
+      "support": "44 MWh",
+      "reason": null
+    },
+    {
+      "id": "Elm_interval",
+      "split": "heldout",
+      "kind": "interval",
+      "question": "How frequently is Elm storage inspected?",
+      "scope": [
+        "elm.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "elm.pdf",
+          "page": 1
+        }
+      ],
+      "support": "63 days",
+      "reason": null
+    },
+    {
+      "id": "Elm_cooling",
+      "split": "heldout",
+      "kind": "cooling",
+      "question": "How does Elm remove heat while charging?",
+      "scope": [
+        "elm.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "elm.pdf",
+          "page": 1
+        }
+      ],
+      "support": "cooling loop",
+      "reason": null
+    },
+    {
+      "id": "Elm_transit_amount",
+      "split": "heldout",
+      "kind": "transit_amount",
+      "question": "What grant amount did Elm Transit receive?",
+      "scope": [
+        "elm.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "elm.pdf",
+          "page": 2
+        }
+      ],
+      "support": "83000 dollars",
+      "reason": null
+    },
+    {
+      "id": "Elm_transit_schedule",
+      "split": "heldout",
+      "kind": "transit_schedule",
+      "question": "When does Elm Transit complete?",
+      "scope": [
+        "elm.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "elm.pdf",
+          "page": 2
+        }
+      ],
+      "support": "June 2029",
+      "reason": null
+    },
+    {
+      "id": "Elm_storage_amount",
+      "split": "heldout",
+      "kind": "storage_amount",
+      "question": "How much grant money did Elm storage receive?",
+      "scope": [
+        "elm.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Elm_storage_schedule",
+      "split": "heldout",
+      "kind": "storage_schedule",
+      "question": "When does Elm storage complete?",
+      "scope": [
+        "elm.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Elm_daily",
+      "split": "heldout",
+      "kind": "daily",
+      "question": "How much energy did Elm use on May 3, 2028?",
+      "scope": [
+        "elm.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Elm_valuation",
+      "split": "heldout",
+      "kind": "valuation",
+      "question": "What is the market valuation of Elm?",
+      "scope": [
+        "elm.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Elm_comparison",
+      "split": "heldout",
+      "kind": "comparison",
+      "question": "Compare the completion dates of Elm storage and Elm Transit.",
+      "scope": [
+        "elm.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Flint_capacity",
+      "split": "heldout",
+      "kind": "capacity",
+      "question": "How much energy does Flint storage hold?",
+      "scope": [
+        "flint.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "flint.pdf",
+          "page": 1
+        }
+      ],
+      "support": "52 MWh",
+      "reason": null
+    },
+    {
+      "id": "Flint_interval",
+      "split": "heldout",
+      "kind": "interval",
+      "question": "How frequently is Flint storage inspected?",
+      "scope": [
+        "flint.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "flint.pdf",
+          "page": 1
+        }
+      ],
+      "support": "70 days",
+      "reason": null
+    },
+    {
+      "id": "Flint_cooling",
+      "split": "heldout",
+      "kind": "cooling",
+      "question": "How does Flint remove heat while charging?",
+      "scope": [
+        "flint.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "flint.pdf",
+          "page": 1
+        }
+      ],
+      "support": "cooling loop",
+      "reason": null
+    },
+    {
+      "id": "Flint_transit_amount",
+      "split": "heldout",
+      "kind": "transit_amount",
+      "question": "What grant amount did Flint Transit receive?",
+      "scope": [
+        "flint.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "flint.pdf",
+          "page": 2
+        }
+      ],
+      "support": "97000 dollars",
+      "reason": null
+    },
+    {
+      "id": "Flint_transit_schedule",
+      "split": "heldout",
+      "kind": "transit_schedule",
+      "question": "When does Flint Transit complete?",
+      "scope": [
+        "flint.pdf"
+      ],
+      "unanswerable": false,
+      "relevant_pages": [
+        {
+          "doc_name": "flint.pdf",
+          "page": 2
+        }
+      ],
+      "support": "June 2029",
+      "reason": null
+    },
+    {
+      "id": "Flint_storage_amount",
+      "split": "heldout",
+      "kind": "storage_amount",
+      "question": "How much grant money did Flint storage receive?",
+      "scope": [
+        "flint.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Flint_storage_schedule",
+      "split": "heldout",
+      "kind": "storage_schedule",
+      "question": "When does Flint storage complete?",
+      "scope": [
+        "flint.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Flint_daily",
+      "split": "heldout",
+      "kind": "daily",
+      "question": "How much energy did Flint use on May 3, 2028?",
+      "scope": [
+        "flint.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Flint_valuation",
+      "split": "heldout",
+      "kind": "valuation",
+      "question": "What is the market valuation of Flint?",
+      "scope": [
+        "flint.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    },
+    {
+      "id": "Flint_comparison",
+      "split": "heldout",
+      "kind": "comparison",
+      "question": "Compare the completion dates of Flint storage and Flint Transit.",
+      "scope": [
+        "flint.pdf"
+      ],
+      "unanswerable": true,
+      "relevant_pages": [],
+      "support": null,
+      "reason": "Requested fact is absent; related topic or Transit figures cannot substitute."
+    }
+  ]
+}

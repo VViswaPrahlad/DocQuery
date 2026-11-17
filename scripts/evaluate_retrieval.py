@@ -95,7 +95,7 @@ def mock_refusal_contract(store, cases):
         assert "does not contain enough information" in kwargs["messages"][0]["content"]
         calls += 1
         return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(
-            content="The provided evidence does not contain enough information to answer."))])
+            content='{"decision":"abstain","claims":[],"reason":"insufficient_evidence"}'))])
 
     with patch.object(rag, "get_client", return_value=object()), patch.object(rag, "_safe_chat_completion", side_effect=complete):
         for case in cases:
